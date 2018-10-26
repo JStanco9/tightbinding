@@ -11,5 +11,5 @@ To Install: ( installs library to /usr/local/lib, header to /usr/local/include )
   
 To Use: be sure that $PATH variable contains /usr/local/
   - #include \<tightbinding\>
-  - compile with g++ with flag -ltightbinding, 
+  - compile with g++ with flags -ltightbinding -larmadillo
   
