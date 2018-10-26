@@ -6,10 +6,10 @@ Makes use of the following libraries:
   MPI ( Message Passing Interface ): for multi-threaded construction of Hamiltonian from hopping energies.
   
 To Install: ( installs library to /usr/local/lib, header to /usr/local/include )
-  cd ~/.../tightbinding &&
-  make install
+  - cd ~/.../tightbinding
+  - make install
   
 To Use: be sure that $PATH variable contains /usr/local/
-  #include <tightbinding>
-  compile with -ltightbinding, 
+  - #include \<tightbinding\>
+  - compile with -ltightbinding, 
   
