@@ -82,25 +82,10 @@ private:
 
 #endif /* TB_HAM_H */
 
-typedef Operator Ham;
-struct latticeSite;
+typedef Operator TBHam;
 
 
-struct TBFileSpec {
-	size_t nBands;
-	size_t nSites;
-	size_t nHopping;
-	std::vector<size_t> hrWeights;
-	size_t latDim;
-	int dataPos;
-	bool use_ws_distance;
-	std::string hr;
-	std::string wsvec;
-	void fill( std::ifstream &hrFile );
-};
-
-
-struct latticeSite {
+struct LatticeSite {
 	arma::Col<int> coords;
 	arma::cx_mat hoppingEnergies;
 	arma::umat wsWeights;
@@ -109,38 +94,44 @@ struct latticeSite {
 };
 
 
-class HamFactory {
+class TBSpec {
 public:
-	HamFactory( const TBFileSpec &spec );
-	Ham buildHam( const arma::vec &k );
+	size_t nBands;
+	size_t nSites;
+	size_t nHopping;
+	std::vector<size_t> hrWeights;
+	std::vector<LatticeSite> sites;
+	size_t latDim;
+	int dataPos;
+	bool use_ws;
+	std::string hr;
+	std::string wsvec;
+	void getFileInfo( std::ifstream &hrFile );
+	void fillSites( std::ifstream &hrFile );
+	void fillSites( std::ifstream &hrFile, std::ifstream &wsFile );
 private:
-	Ham localHam_ws( const latticeSite &site, const arma::vec &k );
-	Ham localHam_no_ws( const latticeSite &site, const arma::vec &k );
-	Ham build_ws( const arma::vec &k );
-	Ham build_no_ws( const arma::vec &k );
-	latticeSite getNextSite( std::ifstream &hrFile );
-	latticeSite getNextSite( std::ifstream &hrFile, std::ifstream &wsvecFile );
-	void fillSites_ws();
-	void fillSites_no_ws();
-	TBFileSpec specs;
-	std::vector<latticeSite> sites;
+	LatticeSite getNextSite( std::ifstream &hrFile );
+	LatticeSite getNextSite( std::ifstream &hrFile, std::ifstream &wsFile );
 };
 
 
 class TBModel {
 public:
-	TBModel( std::string hr, std::string wsvec );
-	TBModel( std::string hr );
-	const Ham &Ham( arma::vec k ) const;
+	TBModel( std::string hr, std::string wsvec, size_t nThr = 1 );
+	TBModel( std::string hr, size_t nThr = 1 );
+	const TBHam &Ham( arma::vec k ) const;
 	const arma::cx_mat &eigVecs( arma::vec k ) const;
 	const arma::vec &eigVals( arma::vec k ) const;
+	void setNThreads( size_t nThr );
+	size_t nThreads() const;
 private:
-	HamFactory getTBSpecs( const std::string &hr );
-	HamFactory getTBSpecs( const std::string &hr, const std::string &wsvec );
+	TBSpec getTBSpecs( const std::string &hr );
+	TBSpec getTBSpecs( const std::string &hr, const std::string &wsvec );
 	void replaceHam( const arma::vec &k ) const;
 	mutable arma::vec kCurr;
-	mutable ::Ham hamCurr;
-	mutable HamFactory factory;
+	mutable TBHam hamCurr;
+	TBSpec specs;
+	size_t _nThr;
 };
 
 
