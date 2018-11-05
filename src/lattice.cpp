@@ -26,6 +26,7 @@ const arma::mat &Lattice::vectors() const {
   return latVecs;
 }
 
+
 double Lattice::dimension() const {
   return dim;
 }
